@@ -8,6 +8,9 @@ import {
 } from "@/lib/sheets";
 import { Employee } from "@/types";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 // GET /api/sheets?tab=Employees
 export async function GET(req: NextRequest) {
   const tab = req.nextUrl.searchParams.get("tab") || "Employees";

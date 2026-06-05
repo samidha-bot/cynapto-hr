@@ -4,7 +4,10 @@
  */
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization — only created when actually sending email, not at build time
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY || "placeholder");
+}
 const FROM = process.env.RESEND_FROM_EMAIL || "hr@cynapto.com";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://cynapto-hr.vercel.app";
 
@@ -18,7 +21,7 @@ export async function sendEmail({
   subject: string;
   html: string;
 }) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: `Cynapto HR <${FROM}>`,
     to: Array.isArray(to) ? to : [to],
     subject,

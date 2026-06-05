@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchEvents, createEvent, deleteEvent } from "@/lib/calendar";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export async function GET(req: NextRequest) {
   const timeMin = req.nextUrl.searchParams.get("timeMin") || new Date().toISOString();
   const timeMax = req.nextUrl.searchParams.get("timeMax") ||
     new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
   try {
     const events = await fetchEvents(timeMin, timeMax);
-    // Map to our CalendarEvent shape
     const mapped = events.map((e) => ({
       id: e.id || "",
       title: e.summary || "",

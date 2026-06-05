@@ -5,6 +5,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 // POST /api/suggestions — submit anonymous suggestion
 export async function POST(req: NextRequest) {
   try {
@@ -15,13 +18,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Message too short" }, { status: 400 });
     }
 
-    // Store ONLY the message content — no IP, no user agent, no identifying info
     await adminDb.collection("suggestions").add({
-      message: message.trim().slice(0, 1000), // cap at 1000 chars
+      message: message.trim().slice(0, 1000),
       category: category?.trim().slice(0, 50) || "General",
       submittedAt: new Date().toISOString(),
       read: false,
-      // Intentionally NO: ip, userAgent, userId, email, timestamp with fingerprint
     });
 
     return NextResponse.json({ success: true });
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET /api/suggestions — fetch all (admin only, checked via Firestore rules)
+// GET /api/suggestions — fetch all (admin only)
 export async function GET() {
   try {
     const snap = await adminDb

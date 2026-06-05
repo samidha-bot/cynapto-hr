@@ -3,7 +3,9 @@
  * Secured by CRON_SECRET header
  */
 import { NextRequest, NextResponse } from "next/server";
-import { runDailyReminders } from "@/lib/reminders";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
   const secret = req.headers.get("x-cron-secret") || req.nextUrl.searchParams.get("secret");
@@ -13,6 +15,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const { runDailyReminders } = await import("@/lib/reminders");
     const results = await runDailyReminders();
     return NextResponse.json({
       success: true,
